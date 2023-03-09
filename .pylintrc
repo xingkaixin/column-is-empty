@@ -1,0 +1,25 @@
+[MASTER]
+# 允许导入 pydantic 库
+extension-pkg-allow-list=pydantic
+
+[MESSAGES CONTROL]
+disable=invalid-name, # 禁用无效名称的警告
+        redefined-outer-name, # 禁用在函数或类中重新定义外部名称的警告
+        missing-module-docstring, # 禁用缺少模块docstring的警告
+        missing-function-docstring, # 禁用缺少函数docstring的警告
+        missing-class-docstring, # 禁用缺少类docstring的警告
+        W0703 # W0703: 忽略 "Catching too general exception Exception" 警告
+
+# 忽略 "Use lazy % formatting in logging functions" 警告
+logging-format-style=percent
+
+[DESIGN]
+# 设置最少的公共方法数量为 0
+min-public-methods=0
+
+[FORMAT]
+# 输出的格式
+# 设置每行最大长度为 120
+max-line-length=120
+indent-string='    '
+single-quotes=True
