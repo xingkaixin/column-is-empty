@@ -26,11 +26,14 @@ def check_file(file_path: Path) -> pd.DataFrame:
         column_names = list(df.columns)
         empty_col_counts = df.isnull().sum()
         is_all_empty = [df[col].isna().all() for col in df.columns]
+        total_rows = len(df.index)
+
         result = {
             "file_name": file_path.name,
             "column_name": column_names,
             "is_all_empty": is_all_empty,
             "empty_column_counts": empty_col_counts,
+            "total_rows": total_rows,
         }
         output = pd.DataFrame(result)
         return output
