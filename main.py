@@ -7,10 +7,56 @@ column_name: 列名称
 is_all_empty: 列值全部为空
 empty_column_counts: 空值的行数
 """
+
+import math
+import time
+from abc import ABC
 from pathlib import Path
 
 import pandas as pd
+import requests
 from loguru import logger
+
+from config import api_config
+
+
+class FetchDataBase(ABC):
+    def __init__(self):
+        pass
+
+    @property
+    def data(self):
+        pass
+
+
+class HttpFetchData(FetchDataBase):
+    def __init__(self, url):
+        self.url = url
+
+    def _request_page(self, page, size=1000, delay=2):
+        resp = requests.get(self.url, {"page": page, "size": size})
+        data = resp.json().get("data")
+        total_page = math.ceil((resp.json().get("extend").get("total")) / size)
+        time.sleep(delay)
+        return data, total_page
+
+    @property
+    def data(self) -> pd.DataFrame:
+        page = 1
+        data_df = []
+        while True:
+            page_df, total_page = self._request_page(page)
+            page += 1
+            if page > total_page:
+                break
+            data_df.append(page_df)
+        return pd.concat(data_df, axis=0, ignore_index=True)
+
+
+def down(filename):
+    url = f"{api_config.base_url}/{filename}/"
+    result = HttpFetchData(url).data
+    result.to_csv(f"./data_set/{filename}.csv", index=False, encoding="utf-8")
 
 
 def check_file(file_path: Path) -> pd.DataFrame:
